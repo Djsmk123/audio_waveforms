@@ -122,6 +122,7 @@ class _WaveBubbleState extends State<WaveBubble> {
               .buffer
               .asUint8List());
     }
+
     if (widget.index == null && widget.path == null && file?.path == null) {
       return;
     }
@@ -140,8 +141,9 @@ class _WaveBubbleState extends State<WaveBubble> {
       "https://storage.googleapis.com/perpetuum-d997d.appspot.com/audio/b93c20a3-9290-45b9-89a3-5c91c0532340-1699018806589-audio.x-wav",
       "https://storage.googleapis.com/perpetuum-d997d.appspot.com/audio/b93c20a3-9290-45b9-89a3-5c91c0532340-1699018806589-audio.x-wav",
     ];
-    controller.preparePlayerUrl(
-      url: urls[getRandome(urls.length)],
+    controller.preparePlayer(
+      //url: urls[getRandome(urls.length)],
+      path: widget.path ?? file!.path,
       shouldExtractWaveform: true,
     );
     // Extracting waveform separately if index is odd.

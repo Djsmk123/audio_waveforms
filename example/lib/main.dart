@@ -56,10 +56,11 @@ class _HomeState extends State<Home> {
   }
 
   void _initialiseControllers() {
-    recorderController = RecorderController()
+    recorderController = RecorderController(useLegacyNormalization: true)
       ..androidEncoder = AndroidEncoder.aac
       ..androidOutputFormat = AndroidOutputFormat.mpeg4
       ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+      ..bitRate = 128000
       ..sampleRate = 44100;
   }
 
@@ -108,31 +109,31 @@ class _HomeState extends State<Home> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: 4,
-                      itemBuilder: (_, index) {
-                        return WaveBubble(
-                          index: index + 1,
-                          isSender: index.isOdd,
-                          width: MediaQuery.of(context).size.width / 2,
-                          appDirectory: appDirectory,
-                        );
-                      },
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //     itemCount: 4,
+                  //     itemBuilder: (_, index) {
+                  //       return WaveBubble(
+                  //         index: index + 1,
+                  //         isSender: index.isOdd,
+                  //         width: MediaQuery.of(context).size.width / 2,
+                  //         appDirectory: appDirectory,
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   if (isRecordingCompleted)
                     WaveBubble(
                       path: path,
                       isSender: true,
                       appDirectory: appDirectory,
                     ),
-                  if (musicFile != null)
-                    WaveBubble(
-                      path: musicFile,
-                      isSender: true,
-                      appDirectory: appDirectory,
-                    ),
+                  // if (musicFile != null)
+                  //   WaveBubble(
+                  //     path: musicFile,
+                  //     isSender: true,
+                  //     appDirectory: appDirectory,
+                  //   ),
                   SafeArea(
                     child: Row(
                       children: [
