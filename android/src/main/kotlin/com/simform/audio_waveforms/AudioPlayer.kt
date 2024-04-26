@@ -4,9 +4,11 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+
+import androidx.media3.exoplayer.ExoPlayer
 import io.flutter.plugin.common.MethodChannel
 import java.lang.Exception
 
@@ -40,6 +42,8 @@ class AudioPlayer(
             player?.addMediaItem(mediaItem)
             player?.prepare()
             playerListener = object : Player.Listener {
+
+                @UnstableApi
                 override fun onPlayerStateChanged(isReady: Boolean, state: Int) {
                     if (!isPlayerPrepared) {
                         if (state == Player.STATE_READY) {
