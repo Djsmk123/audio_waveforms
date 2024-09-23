@@ -46,7 +46,7 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
         bitRate: Int?
     ) {
         recorder?.apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION)
             setOutputFormat(getOutputFormat(outputFormat))
             setAudioEncoder(getEncoder(encoder))
             setAudioSamplingRate(sampleRate)
