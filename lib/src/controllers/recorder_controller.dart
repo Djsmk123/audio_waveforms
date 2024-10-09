@@ -87,6 +87,8 @@ class RecorderController extends ChangeNotifier {
   Timer? _recorderTimer;
 
   final ValueNotifier<int> _currentScrolledDuration = ValueNotifier(0);
+  final StreamController<double> amplitudeController =
+      StreamController.broadcast();
 
   final StreamController<Duration> _currentDurationController =
       StreamController.broadcast();
@@ -348,11 +350,10 @@ class RecorderController extends ChangeNotifier {
           _recorderState = RecorderState.stopped;
           throw "Failed to get sound level";
         }
-        if (_useLegacyNormalization) {
-          _normaliseLegacy(db);
-        } else {
-          _normalise(db);
-        }
+        //add stream
+        final normalisePeak =
+            _useLegacyNormalization ? _normaliseLegacy(db) : _normalise(db);
+        amplitudeController.add(normalisePeak);
         notifyListeners();
       },
     );
@@ -361,22 +362,26 @@ class RecorderController extends ChangeNotifier {
   /// This is normalization is used before 1.0.0 release. From user
   /// feedback we have brought it back util we find better way to normalise
   /// db.
-  void _normaliseLegacy(double peak) {
+  double _normaliseLegacy(double peak) {
+    double normalisePeak = peak;
     if (Platform.isAndroid) {
-      waveData.add(peak - normalizationFactor);
+      // waveData.add(peak - normalizationFactor);
+      normalisePeak = peak - normalizationFactor;
     } else {
       if (peak == 0.0) {
-        waveData.add(0);
+        normalisePeak = 0;
       } else if (peak + normalizationFactor < 1) {
-        waveData.add(0);
+        normalisePeak = 0;
       } else {
-        waveData.add(peak + normalizationFactor);
+        normalisePeak = peak + normalizationFactor;
       }
     }
+    waveData.add(normalisePeak);
+    return normalisePeak;
   }
 
   /// Normalises the peak power for ios and peak amplitude for android
-  void _normalise(double peak) {
+  double _normalise(double peak) {
     final absDb = peak.abs();
     _maxPeak = max(absDb, _maxPeak);
 
@@ -390,6 +395,7 @@ class RecorderController extends ChangeNotifier {
     final scaledWave = (absDb - _currentMin) / (_maxPeak - _currentMin);
     _waveData.add(scaledWave);
     notifyListeners();
+    return scaledWave;
   }
 
   /// Refreshes the waveform to the initial state after scrolling.
@@ -429,6 +435,7 @@ class RecorderController extends ChangeNotifier {
     _currentDurationController.close();
     _recorderStateController.close();
     _recordedFileDurationController.close();
+    amplitudeController.close();
     _recorderTimer?.cancel();
     _timer?.cancel();
     _timer = null;

@@ -42,7 +42,7 @@ public class AudioRecorder: NSObject, AVAudioRecorderDelegate{
         }
 
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: options)
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .voiceChat, options: options)
             try AVAudioSession.sharedInstance().setActive(true)
 
             if let audioUrl = self.audioUrl {
